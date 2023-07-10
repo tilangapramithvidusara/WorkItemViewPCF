@@ -41,7 +41,7 @@ const ListView = () => {
       alignContent: 'flex-start',
       alignItems: 'flex-start'
     }}>
-      <div>
+      <div className='title'>
         <p>{currenEntityLogicalName}</p>
       </div>
       <List
