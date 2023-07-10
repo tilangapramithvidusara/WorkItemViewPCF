@@ -34,3 +34,6 @@
     line-height: 17px;
   }
   
+  .ant-list-item:hover {
+    background-color: #F6F8FA;
+  }
