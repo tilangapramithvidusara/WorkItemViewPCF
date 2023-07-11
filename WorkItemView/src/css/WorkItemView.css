@@ -1,0 +1,44 @@
+.control-container {
+    border: none;
+    padding: 20px;
+}
+
+.title {
+    color: #2E2E2E;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.ant-list-item-meta-title {
+    color:#616161 !important;
+    font-size: 14px !important;
+    font-weight: 500;
+    margin: 0 !important;
+}
+
+.ant-list-split .ant-list-item {
+    border: none;
+    margin-bottom: 0;
+    padding: 5px;
+  }
+  
+  .ant-list-item .ant-list-item-meta .ant-list-item-meta-avatar {
+    margin-inline-end: 10px;
+  }
+  
+  .ant-avatar {
+    width: auto;
+    height: 17px;
+    vertical-align: middle;
+    line-height: 17px;
+  }
+  
+  .ant-list-item:hover {
+    background-color: #F6F8FA;
+  }
+
+  img{
+    width:100px;
+    height:100px;
+  }

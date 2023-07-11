@@ -1,6 +1,6 @@
 export const data = [
-  {name: "item1", id: 1},
-  {name: "item1", id: 2},
-  {name: "item1", id: 3},
-  {name: "item1", id: 4},
+  {name: "Account & Control Management", id: 1},
+  {name: "Activity Management", id: 2},
+  {name: "Lead Management", id: 3},
+  {name: "Opportunity Mamagement", id: 4},
 ]
