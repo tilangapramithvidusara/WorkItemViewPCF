@@ -37,3 +37,8 @@
   .ant-list-item:hover {
     background-color: #F6F8FA;
   }
+
+  img{
+    width:100px;
+    height:100px;
+  }
