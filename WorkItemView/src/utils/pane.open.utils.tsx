@@ -11,7 +11,7 @@ export const openSidePane = (
     window.parent.Xrm.App.sidePanes
       .createPane({
         title: e?.title,
-        imageSrc: e?.imgUrl,
+        // imageSrc: e?.imgUrl,
         paneId: e?.id,
         hideHeader: false,
         canClose: true,

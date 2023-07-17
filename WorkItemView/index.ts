@@ -5,7 +5,7 @@ import App from "./src/App";
 
 interface MyInputs extends IInputs {
     imageUrl: string;
-  }
+}
 
 export class WorkItemView implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 

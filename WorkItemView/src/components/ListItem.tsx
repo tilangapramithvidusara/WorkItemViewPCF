@@ -10,7 +10,7 @@ const ListItem = ({item, index, itemPressHandler, imageUrl}: {item: any; index: 
     <List.Item style={{ textAlign: 'left' }} key={item.id} onClick={() => itemPressHandler(item)}>
       <List.Item.Meta
         avatar={<Avatar src={imageUrl} />}
-        title={item.name}
+        title={item.title}
         // description=""
       />
     </List.Item>
