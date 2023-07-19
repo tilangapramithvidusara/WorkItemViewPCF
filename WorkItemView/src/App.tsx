@@ -6,9 +6,7 @@ interface MyComponentProps {
   imageUrl: any;
 }
 
-const  App: React.FC<MyComponentProps> = ({ imageUrl }) => {
-  console.log("qq==.>", imageUrl);
-  
+const  App: React.FC<MyComponentProps> = ({ imageUrl }) => {  
   return (
     <div>
       <ListView imageUrl={imageUrl} />

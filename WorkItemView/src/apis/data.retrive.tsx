@@ -1,37 +1,16 @@
 import * as React  from "react";
 import { arrayFormater } from "../utils/data.formatter.utils";
-
+// surveyitemid
 // retrive work items tree data
 export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
-  console.log("retrive tree data 'node' ====> ", node);
   try {
     var req: any = {};
     var parameterTypes: any = {
-      surveytemplateid: {
+      relatedsurveyitemid: {
         typeName: "Edm.String",
         structuralProperty: 1,
       },
-      // relatedsurveyitemid: {
-      //   typeName: "Edm.String",
-      //   structuralProperty: 1,
-      // },
     };
-    //  parentworkitemid , surveytemplateid
-    // if (node && node.id) {
-    //   req.parentnodeid = node.id;
-    //   req.parentlogicalname = node.a_attr.LogicalName;
-    //   parameterTypes = {
-    //     ...parameterTypes,
-    //     parentnodeid: {
-    //       typeName: "Edm.String",
-    //       structuralProperty: 1,
-    //     },
-    //     parentlogicalname: {
-    //       typeName: "Edm.String",
-    //       structuralProperty: 1,
-    //     },
-    //   };
-    // }
 
     const surveyTemplate = await 
     window.parent.Xrm.Page.getAttribute("gyde_surveytemplate").getValue()[0]?.id?.replace("{", "").replace("}", "");
@@ -42,8 +21,7 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
 
     const internalId = await window.parent.Xrm.Page.getAttribute("gyde_internalid").getValue()
 
-    req.surveytemplateid = internalId;
-    // req.relatedsurveyitemid = internalId;
+    req.relatedsurveyitemid = internalId;
 
     req.getMetadata = function () {
       return {
@@ -65,9 +43,6 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
         console.log("data res ======> ", resData);
         
         const data = arrayFormater(resData?.workItems, resData?.logicalname, internalId)
-          // (node && node.id && resData.length > 0) || !(node && node.id)
-          //   ? arrayFormater(resData?.workItems)
-          //   : resData;
         return data;
       })
       .catch(function (error: any) {
@@ -83,7 +58,7 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
     console.log("tree data",result);
     return result;
   } catch (error) {
-    console.log("retrive tree data 'error' ====> ", Error);
+    console.log("retrive tree data 'error' ====> ", error);
     return [];
   }
 }

@@ -1,4 +1,4 @@
-import { Avatar, List } from 'antd';
+import { Avatar, List, Spin } from 'antd';
 import * as React from 'react';
 
 // import { data, sampleDBData, sampleObject } from '../sample/data';
@@ -8,6 +8,7 @@ import { retrieveTreeDataRequest } from '../apis/data.retrive';
 
 const ListView = ({imageUrl}: {imageUrl: string}) => {
   const [listData, setListData] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
   
   const openDetailViewHandler = React.useCallback((info: any) => {
     
@@ -19,8 +20,10 @@ const ListView = ({imageUrl}: {imageUrl: string}) => {
   }, []);
 
   const findEntityDetails = React.useCallback(async() => {
+    setLoading(true);
     const retriveData = await retrieveTreeDataRequest();
     setListData(retriveData);
+    setLoading(false);
   }, [])
 
   React.useEffect(() => {
@@ -33,13 +36,15 @@ const ListView = ({imageUrl}: {imageUrl: string}) => {
       alignContent: 'flex-start',
       alignItems: 'flex-start'
     }}>
-      <List
-        itemLayout="horizontal"
-        dataSource={listData}
-        renderItem={(item, index) => (
-          <ListItem item={item} index={index} itemPressHandler={openDetailViewHandler} imageUrl={imageUrl}/>
-        )}
-      />
+      <Spin spinning={loading}>
+        <List
+          itemLayout="horizontal"
+          dataSource={listData}
+          renderItem={(item, index) => (
+            <ListItem item={item} index={index} itemPressHandler={openDetailViewHandler} imageUrl={imageUrl}/>
+          )}
+        />
+      </Spin>
     </div>
   )
 }
