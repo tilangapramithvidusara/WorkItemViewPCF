@@ -5,6 +5,7 @@ import * as React from 'react';
 import ListItem from './ListItem';
 import { openSidePane } from '../utils/pane.open.utils';
 import { retrieveTreeDataRequest } from '../apis/data.retrive';
+import { paneValues } from '../constants/state.constants';
 
 const ListView = ({imageUrl}: {imageUrl: string}) => {
   const [listData, setListData] = React.useState<any[]>([]);
@@ -14,7 +15,7 @@ const ListView = ({imageUrl}: {imageUrl: string}) => {
     
     openSidePane(
       info.logicalName,
-      info?.id,
+      info?.key,
       info,
     );
   }, []);
@@ -28,6 +29,24 @@ const ListView = ({imageUrl}: {imageUrl: string}) => {
 
   React.useEffect(() => {
     findEntityDetails();
+  }, []);
+
+  const handleClickOutside = (event: any) => {
+    if (
+      event.toElement?.textContent === paneValues.SAVE || 
+      event.toElement?.textContent === paneValues.DELETE || 
+      event.toElement?.textContent === paneValues.SAVEANDCLOSE || 
+      event.toElement?.textContent === paneValues.DEACTIVATE
+    ) {
+      findEntityDetails();
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   return (

@@ -10,7 +10,6 @@ export const arrayFormater = (array: any[], logicalname: string, internalId: str
     }
     dataSet = {
       ...rest,
-      key: dataSet.id,
       hasChildren: dataSet.children,
       disableExpand: !dataSet.children,
       expanded: false,
