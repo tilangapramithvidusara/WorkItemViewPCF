@@ -10,6 +10,9 @@ import { paneValues } from '../constants/state.constants';
 const ListView = ({imageUrl}: {imageUrl: string}) => {
   const [listData, setListData] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [currentLocation, setCurrentLocation] = React.useState<string>('')
+  // const [currentInternalId, setCurrentInternalId] = React.useState<string>('')
+  const currentInternalId = React.useRef(null);
   
   const openDetailViewHandler = React.useCallback((info: any) => {
     
@@ -20,25 +23,38 @@ const ListView = ({imageUrl}: {imageUrl: string}) => {
     );
   }, []);
 
-  const findEntityDetails = React.useCallback(async() => {
+  const findEntityDetails = React.useCallback(async(id?: any) => {
     setLoading(true);
-    const retriveData = await retrieveTreeDataRequest();
+    const retriveData = await retrieveTreeDataRequest({internalId: id});
     setListData(retriveData);
     setLoading(false);
   }, [])
 
+  const useEffectHandler = async() => {
+    const internalId = await window.parent.Xrm.Page.getAttribute("gyde_internalid").getValue()
+    currentInternalId.current = internalId
+    await findEntityDetails(internalId);
+    const currentLogicalName = await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
+    // const internalId = window.parent.Xrm.Page.getAttribute("gyde_internalid").getValue()
+    setCurrentLocation(currentLogicalName);
+  }
+
   React.useEffect(() => {
-    findEntityDetails();
+    useEffectHandler();
   }, []);
 
   const handleClickOutside = (event: any) => {
+    // const currentLogicalName = window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
+    console.log('lllllll===> ', currentLocation);
+    
     if (
-      event.toElement?.textContent === paneValues.SAVE || 
+      // currentLogicalName === currentLocation &&
+      (event.toElement?.textContent === paneValues.SAVE || 
       event.toElement?.textContent === paneValues.DELETE || 
       event.toElement?.textContent === paneValues.SAVEANDCLOSE || 
-      event.toElement?.textContent === paneValues.DEACTIVATE
+      event.toElement?.textContent === paneValues.DEACTIVATE)
     ) {
-      findEntityDetails();
+      findEntityDetails(currentInternalId?.current);
     }
   };
 

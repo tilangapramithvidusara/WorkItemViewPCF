@@ -3,6 +3,8 @@ import { arrayFormater } from "../utils/data.formatter.utils";
 // surveyitemid
 // retrive work items tree data
 export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
+  console.log('lpomnim ===> ', node, node?.internalId);
+  
   try {
     var req: any = {};
     var parameterTypes: any = {
@@ -12,14 +14,14 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
       },
     };
 
-    const surveyTemplate = await 
-    window.parent.Xrm.Page.getAttribute("gyde_surveytemplate").getValue()[0]?.id?.replace("{", "").replace("}", "");
+    // const surveyTemplate = await 
+    // window.parent.Xrm.Page.getAttribute("gyde_surveytemplate").getValue()[0]?.id?.replace("{", "").replace("}", "");
     // window.parent.Xrm.Page.data.entity
     //   .getId()
     //   .replace("{", "")
     //   .replace("}", "");
 
-    const internalId = await window.parent.Xrm.Page.getAttribute("gyde_internalid").getValue()
+    const internalId = node?.internalId ? node?.internalId : await window.parent.Xrm.Page.getAttribute("gyde_internalid").getValue()
 
     req.relatedsurveyitemid = internalId;
 
@@ -51,7 +53,7 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
         return [];
       });
     await Promise.all([
-      surveyTemplate, 
+      // surveyTemplate, 
       result,
       internalId,
     ])
