@@ -11,8 +11,8 @@ export const openSidePane = (
     window.parent.Xrm.App.sidePanes
       .createPane({
         title: e?.title,
-        imageSrc: e?.imgUrl,
-        paneId: e?.id,
+        // imageSrc: e?.imgUrl,
+        paneId: e?.workItemsequance?.sequanceid,
         hideHeader: false,
         canClose: true,
         width: 800,
@@ -20,9 +20,8 @@ export const openSidePane = (
       .then((pane: any) => {
         pane.navigate({
           pageType: "entityrecord",
-          entityName: entName,
-          entityId: entId,
-          // formId: frmId,
+          entityName: e?.workItemsequance?.logicalname,
+          entityId: e?.workItemsequance?.sequanceid,
         });
       });
   } else {

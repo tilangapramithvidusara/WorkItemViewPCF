@@ -1,51 +1,69 @@
-import { Avatar, List } from 'antd';
+import { Avatar, List, Spin } from 'antd';
 import * as React from 'react';
 
-import { data } from '../sample/data';
+// import { data, sampleDBData, sampleObject } from '../sample/data';
 import ListItem from './ListItem';
 import { openSidePane } from '../utils/pane.open.utils';
-import { nameMapping } from '../constants/state.constants';
+import { retrieveTreeDataRequest } from '../apis/data.retrive';
+import { paneValues } from '../constants/state.constants';
 
 const ListView = ({imageUrl}: {imageUrl: string}) => {
-  const [currenEntityLogicalName, setCurrentEntityLogicalName] = React.useState<string>('');
-  const [currenEntity, setCurrentEntity] = React.useState<string>(currenEntityLogicalName ? nameMapping[currenEntityLogicalName] : '');
+  const [listData, setListData] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [currentLocation, setCurrentLocation] = React.useState<string>('')
+  // const [currentInternalId, setCurrentInternalId] = React.useState<string>('')
+  const currentInternalId = React.useRef(null);
   
   const openDetailViewHandler = React.useCallback((info: any) => {
-    console.log('openDetailViewHandler =====> ', info);
     
     openSidePane(
-      'Sample Entity',
-      'id-0001-0002',
-      {
-        title: "Sample Title",
-        imageSrc: "https://xsgames.co/randomusers/avatar.php?g=pixel&key=1",
-        id: "id-0001-0002"
-      }
+      info.logicalName,
+      info?.key,
+      info,
     );
   }, []);
 
-  const findEntityDetails = React.useCallback(async() => {
-    const currentLogicalName = await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
-    console.log('current logical name ====> ', currentLogicalName);
-    setCurrentEntityLogicalName(currentLogicalName);
-    const locationId = await window.parent.Xrm.Page.getAttribute(currentLogicalName)?.getValue()[0]?.id?.replace("{", "").replace("}", "");
-    console.log('location id =====> ', locationId);
-    const result = await window.parent.Xrm.Page.ui.formContext.data.entity.getId();
-    // const str = '{AC3FE85C-90E5-ED11-A7C7-000D3A338DD2}';
-    const removedBrackets = result.replace(/[{}]/g, '');
-    console.log('entity id -=======> ', removedBrackets, result);
-    
-    
-    // window.parent.Xrm.Page.getAttribute();
+  const findEntityDetails = React.useCallback(async(id?: any) => {
+    setLoading(true);
+    const retriveData = await retrieveTreeDataRequest({internalId: id});
+    setListData(retriveData);
+    setLoading(false);
   }, [])
 
-  React.useEffect(() => {
-    findEntityDetails();
-  }, []);
+  const useEffectHandler = async() => {
+    const internalId = await window.parent.Xrm.Page.getAttribute("gyde_internalid").getValue()
+    currentInternalId.current = internalId
+    await findEntityDetails(internalId);
+    const currentLogicalName = await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
+    // const internalId = window.parent.Xrm.Page.getAttribute("gyde_internalid").getValue()
+    setCurrentLocation(currentLogicalName);
+  }
 
   React.useEffect(() => {
-    setCurrentEntity(currenEntityLogicalName ? nameMapping[currenEntityLogicalName] : '');
-  }, [currenEntityLogicalName])
+    useEffectHandler();
+  }, []);
+
+  const handleClickOutside = (event: any) => {
+    // const currentLogicalName = window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
+    console.log('lllllll===> ', currentLocation);
+    
+    if (
+      // currentLogicalName === currentLocation &&
+      (event.toElement?.textContent === paneValues.SAVE || 
+      event.toElement?.textContent === paneValues.DELETE || 
+      event.toElement?.textContent === paneValues.SAVEANDCLOSE || 
+      event.toElement?.textContent === paneValues.DEACTIVATE)
+    ) {
+      findEntityDetails(currentInternalId?.current);
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div style={{
@@ -53,16 +71,15 @@ const ListView = ({imageUrl}: {imageUrl: string}) => {
       alignContent: 'flex-start',
       alignItems: 'flex-start'
     }}>
-      <div className='title'>
-        <p>{currenEntity}</p>
-      </div>
-      <List
-        itemLayout="horizontal"
-        dataSource={data}
-        renderItem={(item, index) => (
-          <ListItem item={item} index={index} itemPressHandler={openDetailViewHandler} imageUrl={imageUrl}/>
-        )}
-      />
+      <Spin spinning={loading}>
+        <List
+          itemLayout="horizontal"
+          dataSource={listData}
+          renderItem={(item, index) => (
+            <ListItem item={item} index={index} itemPressHandler={openDetailViewHandler} imageUrl={imageUrl}/>
+          )}
+        />
+      </Spin>
     </div>
   )
 }

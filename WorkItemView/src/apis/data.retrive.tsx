@@ -1,39 +1,29 @@
 import * as React  from "react";
-
+import { arrayFormater } from "../utils/data.formatter.utils";
+// surveyitemid
 // retrive work items tree data
 export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
-  console.log("retrive tree data 'node' ====> ", node);
+  console.log('lpomnim ===> ', node, node?.internalId);
+  
   try {
     var req: any = {};
     var parameterTypes: any = {
-      surveytemplateid: {
+      relatedsurveyitemid: {
         typeName: "Edm.String",
         structuralProperty: 1,
       },
     };
-    //  parentworkitemid , surveytemplateid
-    if (node && node.id) {
-      req.parentnodeid = node.id;
-      req.parentlogicalname = node.a_attr.LogicalName;
-      parameterTypes = {
-        ...parameterTypes,
-        parentnodeid: {
-          typeName: "Edm.String",
-          structuralProperty: 1,
-        },
-        parentlogicalname: {
-          typeName: "Edm.String",
-          structuralProperty: 1,
-        },
-      };
-    }
 
-    var surveyTemplate = await window.parent.Xrm.Page.data.entity
-      .getId()
-      .replace("{", "")
-      .replace("}", "");
+    // const surveyTemplate = await 
+    // window.parent.Xrm.Page.getAttribute("gyde_surveytemplate").getValue()[0]?.id?.replace("{", "").replace("}", "");
+    // window.parent.Xrm.Page.data.entity
+    //   .getId()
+    //   .replace("{", "")
+    //   .replace("}", "");
 
-    req.surveytemplateid = surveyTemplate;
+    const internalId = node?.internalId ? node?.internalId : await window.parent.Xrm.Page.getAttribute("gyde_internalid").getValue()
+
+    req.relatedsurveyitemid = internalId;
 
     req.getMetadata = function () {
       return {
@@ -43,7 +33,6 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
         operationName: "gyde_GetSurveyWorkItemTreeData", // need to change according to work items
       };
     };
-
     const result = await window.parent.Xrm.WebApi.online
       .execute(req)
       .then(function (response: any) {
@@ -53,20 +42,25 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
       })
       .then(function (responseBody: any) {
         const resData = JSON.parse(responseBody.nodedata);
-        const data = resData
-          // (node && node.id && resData.length > 0) || !(node && node.id)
-          //   ? dataFomater(node, JSON.parse(responseBody.nodedata))
-          //   : resData;
+        console.log("data res ======> ", resData);
+        
+        const data = arrayFormater(resData?.workItems, resData?.logicalname, internalId)
         return data;
       })
       .catch(function (error: any) {
+        console.log('error ======> ', error);
+        
         return [];
       });
-    await Promise.all([surveyTemplate, result])
+    await Promise.all([
+      // surveyTemplate, 
+      result,
+      internalId,
+    ])
     console.log("tree data",result);
     return result;
   } catch (error) {
-    console.log("retrive tree data 'error' ====> ", Error);
+    console.log("retrive tree data 'error' ====> ", error);
     return [];
   }
 }
