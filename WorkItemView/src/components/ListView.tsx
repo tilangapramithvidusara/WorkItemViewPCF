@@ -7,7 +7,7 @@ import { openSidePane } from '../utils/pane.open.utils';
 import { retrieveTreeDataRequest } from '../apis/data.retrive';
 import { paneValues } from '../constants/state.constants';
 
-const ListView = ({imageUrl}: {imageUrl: string}) => {
+const ListView = ({imageUrl, defaultimageUrl}: {imageUrl: string, defaultimageUrl: string}) => {
   const [listData, setListData] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [currentLocation, setCurrentLocation] = React.useState<string>('')
@@ -54,7 +54,10 @@ const ListView = ({imageUrl}: {imageUrl: string}) => {
       event.toElement?.textContent === paneValues.SAVEANDCLOSE || 
       event.toElement?.textContent === paneValues.DEACTIVATE)
     ) {
-      findEntityDetails(currentInternalId?.current);
+      setTimeout(() => {
+        findEntityDetails(currentInternalId?.current);
+      }, 1000)
+      
     }
   };
 
@@ -67,7 +70,7 @@ const ListView = ({imageUrl}: {imageUrl: string}) => {
 
   return (
     <div style={{
-      width: '50%',
+      // width: '50%',
       alignContent: 'flex-start',
       alignItems: 'flex-start'
     }}>
@@ -76,7 +79,7 @@ const ListView = ({imageUrl}: {imageUrl: string}) => {
           itemLayout="horizontal"
           dataSource={listData}
           renderItem={(item, index) => (
-            <ListItem item={item} index={index} itemPressHandler={openDetailViewHandler} imageUrl={imageUrl}/>
+            <ListItem item={item} index={index} itemPressHandler={openDetailViewHandler} imageUrl={imageUrl} defaultimageUrl={defaultimageUrl}/>
           )}
         />
       </Spin>

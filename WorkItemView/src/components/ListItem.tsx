@@ -5,11 +5,11 @@ interface MyComponentProps {
   imageUrl: string;
 }
 
-const ListItem = ({item, index, itemPressHandler, imageUrl}: {item: any; index: number; itemPressHandler: any, imageUrl: string}) => {
+const ListItem = ({item, index, itemPressHandler, imageUrl, defaultimageUrl}: {item: any; index: number; itemPressHandler: any, imageUrl: string, defaultimageUrl: string}) => {
   return (
     <List.Item style={{ textAlign: 'left' }} key={item.id} onClick={() => itemPressHandler(item)}>
       <List.Item.Meta
-        avatar={item?.icon ? <img src={`data:image/png;base64,${item?.icon}`} alt="icon" style={iconStyle} /> : null}
+        avatar={item?.icon ? <img src={`data:image/png;base64,${item?.icon}`} alt="icon" style={iconStyle} /> : <img src={`${defaultimageUrl}`} alt="icon" style={iconStyle} />}
         title={item?.title}
         description={item?.workItemtype?.type}
       />
