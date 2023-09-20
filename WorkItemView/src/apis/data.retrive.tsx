@@ -1,5 +1,6 @@
 import * as React  from "react";
 import { arrayFormater } from "../utils/data.formatter.utils";
+import { LogicalNames } from "../constants/state.constants";
 // surveyitemid
 // retrive work items tree data
 export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
@@ -12,6 +13,14 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
         typeName: "Edm.String",
         structuralProperty: 1,
       },
+      surveytemplateid: {
+        typeName: "Edm.String",
+        structuralProperty: 1,
+      },
+      islist: {
+        typeName: "Edm.Boolean",
+        structuralProperty: 1,
+      }
     };
 
     // const surveyTemplate = await 
@@ -21,9 +30,25 @@ export const retrieveTreeDataRequest = async (node?: any): Promise<any[]> => {
     //   .replace("{", "")
     //   .replace("}", "");
 
+    let surveyTemplate = null;
+
+    const currentLogicalName = await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName
+
+    if (currentLogicalName === LogicalNames?.SURVEY) {
+      surveyTemplate = await window.parent.Xrm.Page.data.entity
+      .getId()
+      .replace("{", "")
+      .replace("}", "");
+    } else {
+      surveyTemplate = await 
+        window.parent.Xrm.Page.getAttribute(LogicalNames?.SURVEY).getValue()[0]?.id?.replace("{", "").replace("}", "")
+    }
+
     const internalId = node?.internalId ? node?.internalId : await window.parent.Xrm.Page.getAttribute("gyde_internalid").getValue()
 
     req.relatedsurveyitemid = internalId;
+    req.surveytemplateid = surveyTemplate;
+    req.islist = true;
 
     req.getMetadata = function () {
       return {
