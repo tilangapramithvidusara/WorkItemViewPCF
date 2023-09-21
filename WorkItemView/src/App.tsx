@@ -4,12 +4,13 @@ import ListView from './components/ListView'
 
 interface MyComponentProps {
   imageUrl: any;
+  defaultimageUrl: any;
 }
 
-const  App: React.FC<MyComponentProps> = ({ imageUrl }) => {  
+const  App: React.FC<MyComponentProps> = ({ imageUrl, defaultimageUrl }) => {  
   return (
     <div>
-      <ListView imageUrl={imageUrl} />
+      <ListView imageUrl={imageUrl} defaultimageUrl={defaultimageUrl} />
     </div>
   )
 }

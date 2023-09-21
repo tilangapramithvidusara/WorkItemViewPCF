@@ -5,13 +5,16 @@ import App from "./src/App";
 
 interface MyInputs extends IInputs {
     imageUrl: string;
+    defaultimageUrl: string;
 }
 
 export class WorkItemView implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
     private container: HTMLDivElement;
-    private imgElement:HTMLImageElement;
+    private imgElement: HTMLImageElement;
     private imageUrl: string;
+    private defaultimgElement: HTMLImageElement;
+    private defaultimageUrl: string;
     constructor() {}
 
     /**
@@ -24,16 +27,27 @@ export class WorkItemView implements ComponentFramework.StandardControl<IInputs,
      */
     public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container:HTMLDivElement): void {
         this.imgElement = document.createElement("img");
-		context.resources.getResource("dots.png", this.setImage.bind(this, false, "png"), this.showError.bind(this));
+		context.resources.getResource("dots.png", this.setImage.bind(this, "dots.png", false, "png"), this.showError.bind(this));
+        // context.resources.getResource("defaulticon.png", this.setImage.bind(this, false, "png"), this.showError.bind(this));
 		container.appendChild(this.imgElement);
+        this.defaultimgElement = document.createElement("img");
+		// context.resources.getResource("dots.png", this.setImage.bind(this, "dots.png", false, "png"), this.showError.bind(this));
+        context.resources.getResource("defaulticon.png", this.setImage.bind(this, "defaulticon.png", false, "png"), this.showError.bind(this));
+		container.appendChild(this.defaultimgElement);
         this.container = container;
         
     }
 
-    private setImage(shouldUpdateOutput:boolean, fileType: string, fileContent: string): void
+    private setImage(name: string, shouldUpdateOutput:boolean, fileType: string, fileContent: string): void
 	{
-        this.imageUrl = this.generateImageSrcUrl(fileType, fileContent);
-        this.imgElement.src = this.imageUrl;
+        if (name === "dots.png") {
+            this.imageUrl = this.generateImageSrcUrl(fileType, fileContent);
+            this.imgElement.src = this.imageUrl;
+        } else {
+            this.defaultimageUrl = this.generateImageSrcUrl(fileType, fileContent);
+            this.defaultimgElement.src = this.defaultimageUrl;
+        }
+        
         this.updateView();
         
 	}
@@ -51,12 +65,12 @@ export class WorkItemView implements ComponentFramework.StandardControl<IInputs,
 
     public updateView(context?: ComponentFramework.Context<IInputs>): void {
         this.renderComponent();
-      }
+    }
     
     private renderComponent(): void {
-        if (this.imageUrl && !this.imageUrl.includes('undefined')) {
+        if (this.imageUrl && !this.imageUrl.includes('undefined') && this.defaultimageUrl && !this.defaultimageUrl.includes('undefined')) {
             
-            ReactDOM.render(React.createElement(App, { imageUrl: this.imageUrl }), this.container);
+            ReactDOM.render(React.createElement(App, { imageUrl: this.imageUrl, defaultimageUrl: this.defaultimageUrl }), this.container);
         } else {
             ReactDOM.render(React.createElement(App), this.container);
         }
